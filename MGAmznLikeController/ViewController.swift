@@ -48,7 +48,9 @@ class ViewController: UIViewController {
     var controlStatus : ControlStatus = .pause
     var panGesture : UIPanGestureRecognizer?
     var maxHorizontalMovement : CGFloat = 0
+    let horizontalTriggerPoint : CGFloat = 50
     let maxVerticalMovement : CGFloat = 150
+    let verticalTriggerPoint : CGFloat = 50
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +61,7 @@ class ViewController: UIViewController {
         self.controllerView.addGestureRecognizer(panGesture!)
         self.controllerBckgImg.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(tap(recognizer:))))
         self.controllerBckgImg.addGestureRecognizer(UILongPressGestureRecognizer.init(target: self, action: #selector(longPress(recognizer:))))
-       
+        self.subControllerView.isHidden = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -107,7 +109,6 @@ class ViewController: UIViewController {
         self.horizontalActionLeftCnstr.constant = self.controllerView.frame.size.width / 2
         self.horizontalActionView.alpha = 0
         self.subControllerView.alpha = 0.8
-        self.subControllerView.isHidden = true
         self.controllerView.alpha = 1
         self.controlMovement = .noMovement
         self.actionTriggered = .noAction
@@ -115,32 +116,27 @@ class ViewController: UIViewController {
     }
 
     
-    @objc func pan(recognizer: UIPanGestureRecognizer){
+    @objc func pan(recognizer: UIPanGestureRecognizer) {
         let yMove = max(0, -recognizer.translation(in: self.view).y)
         let xMove = recognizer.translation(in: self.view).x
-        
-        if self.controlMovement == .noMovement {
-            if abs(yMove) > abs(xMove) {
-                self.controlMovement = .vertical
+        if recognizer.state == UIGestureRecognizerState.changed {
+            if self.controlMovement == .noMovement {
+                if abs(yMove) > abs(xMove) {
+                    self.controlMovement = .vertical
+                }
+                else if abs(yMove) < abs(xMove) {
+                    self.controlMovement = .horizontal
+                }
+                else {
+                    return
+                }
             }
-            else if abs(yMove) < abs(xMove) {
-                self.controlMovement = .horizontal
-            }
-            else {
+            
+            if !self.subControllerView.isHidden && self.controlMovement == .horizontal {
+                self.controlMovement = .noMovement
                 return
             }
-        }
-        
-        if !self.subControllerView.isHidden && self.controlMovement == .horizontal {
-            self.controlMovement = .noMovement
-            return
-        }
-        
-
-        if recognizer.state == UIGestureRecognizerState.ended {
-            self.controlDidEndMove()
-        }
-        else {
+            
             switch self.controlMovement{
             case .horizontal:
                 let controllerMove = xMove / 2.5
@@ -153,11 +149,11 @@ class ViewController: UIViewController {
                     self.horizontalActionRightCnstr.constant = min(self.maxHorizontalMovement*1.5, xMove * 1.2 )
                     self.horizontalActionLeftCnstr.constant = self.controllerView.frame.size.width / 2
                     
-                    if self.actionTriggered != .rightAction && xMove > (self.maxHorizontalMovement / 2) {
-                       self.actionTriggered = .rightAction
+                    if self.actionTriggered != .rightAction && xMove > horizontalTriggerPoint {
+                        self.actionTriggered = .rightAction
                         self.vibrate()
                     }
-                    else if self.actionTriggered == .rightAction && xMove < (self.maxHorizontalMovement / 2){
+                    else if self.actionTriggered == .rightAction && xMove < horizontalTriggerPoint{
                         self.actionTriggered = .noAction
                     }
                 }
@@ -167,11 +163,11 @@ class ViewController: UIViewController {
                     self.horizontalActionLeftCnstr.constant = max(-self.maxHorizontalMovement*1.5, xMove * 1.2)
                     self.horizontalActionRightCnstr.constant = -self.controllerView.frame.size.width / 2
                     
-                    if self.actionTriggered != .leftAction && xMove < -(self.maxHorizontalMovement / 2) {
+                    if self.actionTriggered != .leftAction && xMove < -horizontalTriggerPoint {
                         self.actionTriggered = .leftAction
                         self.vibrate()
                     }
-                    else if self.actionTriggered == .leftAction && xMove > -(self.maxHorizontalMovement / 2) {
+                    else if self.actionTriggered == .leftAction && xMove > -horizontalTriggerPoint {
                         self.actionTriggered = .noAction
                     }
                 }
@@ -184,26 +180,30 @@ class ViewController: UIViewController {
                     self.subControllerView.alpha = max(0.8-(abs(yMove)*0.8/self.maxVerticalMovement), 0)
                 }
                 
-                if self.actionTriggered != .topAction && abs(yMove) > self.maxVerticalMovement/2 {
+                if self.actionTriggered != .topAction && abs(yMove) > verticalTriggerPoint {
                     self.actionTriggered = .topAction
                     self.vibrate()
                 }
-                else if self.actionTriggered == .topAction && abs(yMove) < self.maxVerticalMovement/2{
+                else if self.actionTriggered == .topAction && abs(yMove) < verticalTriggerPoint {
                     self.actionTriggered = .noAction
                 }
                 else if abs(yMove) >= self.maxVerticalMovement * 2 {
-                    controlDidEndMove()
+                    controlDidEndMove(showSubcontrol: false)
                 }
                 break
                 
             default:
                 break
             }
-
         }
+        else if recognizer.state == UIGestureRecognizerState.ended {
+            self.controlDidEndMove(showSubcontrol: self.subControllerView.isHidden && controlMovement == .vertical && self.actionTriggered == .noAction)
+        }
+
     }
     
-    func controlDidEndMove(){
+    func controlDidEndMove(showSubcontrol: Bool){
+        self.subControllerView.isHidden = !showSubcontrol
         self.panGesture!.isEnabled = false
         self.vibrate()
         switch self.actionTriggered{
