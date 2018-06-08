@@ -29,6 +29,7 @@ class ViewController: UIViewController {
         case pause
     }
     
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var horizontalActionLeftCnstr: NSLayoutConstraint!
     @IBOutlet weak var horizontalActionRightCnstr: NSLayoutConstraint!
     @IBOutlet weak var horizontalActionView: UIView!
@@ -42,7 +43,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var controllerHoriCenterCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerBckgImg: UIImageView!
     @IBOutlet weak var controllerCentralImg: UIImageView!
-    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var fullContainerView: UIView!
     
     var actionTriggered : ActionTriggered = .noAction
     var controlMovement : ControlMovement = .noMovement
@@ -96,7 +97,7 @@ class ViewController: UIViewController {
                        animations: {
                         self.subControllerView.cornerRadius = (self.controllerView.frame.size.height / 2 + self.openedSubcontrollerHeight / 2)
                         self.subcontrollerHeightCnstr.constant = self.openedSubcontrollerHeight
-                        self.containerView.layoutSubviews()
+                        self.fullContainerView.layoutSubviews()
                         
         }, completion: { (value: Bool) in
         })
@@ -106,7 +107,7 @@ class ViewController: UIViewController {
         UIView.animate(withDuration: animated ? 0.055 : 0.0, animations: {
             self.subControllerView.cornerRadius = self.controllerView.frame.size.height / 2
             self.subcontrollerHeightCnstr.constant = self.closedSubcontrollerHeight
-            self.containerView.layoutSubviews()
+            self.fullContainerView.layoutSubviews()
         }) { (success) in
             self.subControllerView.isHidden = true
         }
@@ -142,7 +143,7 @@ class ViewController: UIViewController {
                        animations: {
                         self.controllerVertCenterCnstr.constant = 0
                         self.controllerHoriCenterCnstr.constant = 0
-                        self.containerView.layoutSubviews()
+                        self.fullContainerView.layoutSubviews()
         }, completion: {
             //Code to run after animating
             (value: Bool) in
@@ -183,7 +184,7 @@ class ViewController: UIViewController {
             case .horizontal:
                 let controllerMove = xMove / 2.5
                 self.controllerHoriCenterCnstr.constant = controllerMove
-                self.horizontalActionView.alpha = min(abs(controllerMove/(self.maxHorizontalMovement)), 0.8)
+                self.horizontalActionView.alpha = min(abs(controllerMove/(self.maxHorizontalMovement)), 0.9)
                 
                 if xMove > 0 {
                     self.horizontalActionLeftImage.isHidden = true
@@ -218,7 +219,7 @@ class ViewController: UIViewController {
             case .vertical:
                 self.controllerVertCenterCnstr.constant = max(-yMove, -self.maxVerticalMovement)
                 self.controllerView.alpha = max(1-(abs(yMove)/self.maxVerticalMovement), 0)
-                self.subControllerView.alpha = max(0.8-(abs(yMove)*0.8/self.maxVerticalMovement), 0)
+                self.subControllerView.alpha = max(0.9-(abs(yMove)*0.9/self.maxVerticalMovement), 0)
                 
                 if self.actionTriggered != .topAction && abs(yMove) > verticalTriggerPoint {
                     self.actionTriggered = .topAction
