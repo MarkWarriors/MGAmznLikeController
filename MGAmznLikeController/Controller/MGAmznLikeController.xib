@@ -13,6 +13,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MGAmznLikeController" customModule="MGAmznLikeController" customModuleProvider="target">
             <connections>
+                <outlet property="containerView" destination="iN0-l3-epB" id="wV5-Ir-36c"/>
                 <outlet property="controllerBckgImg" destination="3NI-4E-19P" id="MAO-Yk-Jxp"/>
                 <outlet property="controllerCentralImg" destination="3Qc-Rc-fIk" id="1GT-ka-Y9M"/>
                 <outlet property="controllerHoriCenterCnstr" destination="d72-cn-Obw" id="nUV-Ey-YqI"/>

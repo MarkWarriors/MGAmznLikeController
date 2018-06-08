@@ -42,6 +42,7 @@ import UIKit
         case pause = 0
     }
 
+    @IBOutlet var containerView: UIView!
     @IBOutlet weak var fullContainerView: UIView!
     @IBOutlet weak var tabBarView: UIView!
     @IBOutlet weak var horizontalActionView: UIView!
@@ -226,7 +227,7 @@ import UIKit
         }
     }
 
-    @objc public func resetController(animated: Bool = false) {
+    @objc public func resetController(animated: Bool = true) {
         UIView.animate(withDuration: animated ? 0.3 : 0,
                        delay: 0,
                        usingSpringWithDamping: 0.4,
