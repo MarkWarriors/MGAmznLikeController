@@ -37,11 +37,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var controllerView: UIView!
     @IBOutlet weak var subControllerView: UIView!
     @IBOutlet weak var tabBarView: UIView!
+    @IBOutlet weak var subcontrollerHeightCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerVertCenterCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerHoriCenterCnstr: NSLayoutConstraint!
-    
     @IBOutlet weak var controllerBckgImg: UIImageView!
     @IBOutlet weak var controllerCentralImg: UIImageView!
+    @IBOutlet weak var containerView: UIView!
     
     var actionTriggered : ActionTriggered = .noAction
     var controlMovement : ControlMovement = .noMovement
@@ -52,6 +53,9 @@ class ViewController: UIViewController {
     let maxVerticalMovement : CGFloat = 150
     let verticalTriggerPoint : CGFloat = 50
     
+    var closedSubcontrollerHeight : CGFloat = 0
+    var openedSubcontrollerHeight : CGFloat = 80
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.subControllerView.alpha = 0
@@ -61,13 +65,51 @@ class ViewController: UIViewController {
         self.controllerView.addGestureRecognizer(panGesture!)
         self.controllerBckgImg.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(tap(recognizer:))))
         self.controllerBckgImg.addGestureRecognizer(UILongPressGestureRecognizer.init(target: self, action: #selector(longPress(recognizer:))))
-        self.subControllerView.isHidden = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        resetController()
+        self.resetController()
+        self.openedSubcontrollerHeight = self.subcontrollerHeightCnstr.constant
         self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2.5
+        self.closeSubController(animated: false)
+    }
+    
+    private func toggleSubcontroller(forceOpen: Bool = false) {
+        if self.subcontrollerHeightCnstr.constant == self.closedSubcontrollerHeight || forceOpen {
+            // OPEN
+            openSubController(animated: true)
+        }
+        else {
+            // CLOSE
+            closeSubController(animated: true)
+        }
+    }
+    
+    private func openSubController(animated: Bool){
+        self.subControllerView.isHidden = false
+        UIView.animate(withDuration: animated ? 0.25 : 0.0,
+                       delay: 0,
+                       usingSpringWithDamping: 0.35,
+                       initialSpringVelocity: 0.35,
+                       options: UIViewAnimationOptions.curveEaseIn,
+                       animations: {
+                        self.subControllerView.cornerRadius = (self.controllerView.frame.size.height / 2 + self.openedSubcontrollerHeight / 2)
+                        self.subcontrollerHeightCnstr.constant = self.openedSubcontrollerHeight
+                        self.containerView.layoutSubviews()
+                        
+        }, completion: { (value: Bool) in
+        })
+    }
+    
+    private func closeSubController(animated: Bool){
+        UIView.animate(withDuration: animated ? 0.055 : 0.0, animations: {
+            self.subControllerView.cornerRadius = self.controllerView.frame.size.height / 2
+            self.subcontrollerHeightCnstr.constant = self.closedSubcontrollerHeight
+            self.containerView.layoutSubviews()
+        }) { (success) in
+            self.subControllerView.isHidden = true
+        }
     }
     
     @objc func tap(recognizer: UIPanGestureRecognizer) {
@@ -87,12 +129,12 @@ class ViewController: UIViewController {
     @objc func longPress(recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .began {
             self.vibrate()
-            self.subControllerView.isHidden = !self.subControllerView.isHidden
+            toggleSubcontroller()
         }
     }
 
     func resetController() {
-        UIView.animate(withDuration: TimeInterval(0.3),
+        UIView.animate(withDuration: 0.3,
                        delay: 0,
                        usingSpringWithDamping: 0.4,
                        initialSpringVelocity: 1,
@@ -100,7 +142,7 @@ class ViewController: UIViewController {
                        animations: {
                         self.controllerVertCenterCnstr.constant = 0
                         self.controllerHoriCenterCnstr.constant = 0
-                        self.view.layoutSubviews()
+                        self.containerView.layoutSubviews()
         }, completion: {
             //Code to run after animating
             (value: Bool) in
@@ -132,7 +174,7 @@ class ViewController: UIViewController {
                 }
             }
             
-            if !self.subControllerView.isHidden && self.controlMovement == .horizontal {
+            if self.subcontrollerHeightCnstr.constant > 0 && self.controlMovement == .horizontal {
                 self.controlMovement = .noMovement
                 return
             }
@@ -176,9 +218,7 @@ class ViewController: UIViewController {
             case .vertical:
                 self.controllerVertCenterCnstr.constant = max(-yMove, -self.maxVerticalMovement)
                 self.controllerView.alpha = max(1-(abs(yMove)/self.maxVerticalMovement), 0)
-                if !self.subControllerView.isHidden {
-                    self.subControllerView.alpha = max(0.8-(abs(yMove)*0.8/self.maxVerticalMovement), 0)
-                }
+                self.subControllerView.alpha = max(0.8-(abs(yMove)*0.8/self.maxVerticalMovement), 0)
                 
                 if self.actionTriggered != .topAction && abs(yMove) > verticalTriggerPoint {
                     self.actionTriggered = .topAction
@@ -188,7 +228,7 @@ class ViewController: UIViewController {
                     self.actionTriggered = .noAction
                 }
                 else if abs(yMove) >= self.maxVerticalMovement * 2 {
-                    controlDidEndMove(showSubcontrol: false)
+                    controlDidEndMove(toggleSubControl: false)
                 }
                 break
                 
@@ -197,13 +237,15 @@ class ViewController: UIViewController {
             }
         }
         else if recognizer.state == UIGestureRecognizerState.ended {
-            self.controlDidEndMove(showSubcontrol: self.subControllerView.isHidden && controlMovement == .vertical && self.actionTriggered == .noAction)
+            self.controlDidEndMove(toggleSubControl: controlMovement == .vertical && self.actionTriggered == .noAction)
         }
 
     }
     
-    func controlDidEndMove(showSubcontrol: Bool) {
-        self.subControllerView.isHidden = !showSubcontrol
+    func controlDidEndMove(toggleSubControl: Bool) {
+        if toggleSubControl {
+            self.toggleSubcontroller(forceOpen: false)
+        }
         self.panGesture!.isEnabled = false
         self.vibrate()
         switch self.actionTriggered{
