@@ -322,7 +322,7 @@ import UIKit
                     self.actionTriggered = .noAction
                 }
                 else if abs(yMove) >= self.maxVerticalMovement * 2 {
-                    controlDidEndMove(toggleSubControl: false)
+                    self.controlDidEndMove()
                 }
                 break
                 
@@ -331,15 +331,18 @@ import UIKit
             }
         }
         else if recognizer.state == UIGestureRecognizerState.ended {
-            self.controlDidEndMove(toggleSubControl: controlMovement == .vertical && self.actionTriggered == .noAction)
+            if controlMovement == .vertical && self.actionTriggered == .noAction{
+                self.toggleSubcontroller()
+            }
+            else {
+                self.closeSubController(animated: true)
+            }
+            self.controlDidEndMove()
         }
         
     }
 
-    private func controlDidEndMove(toggleSubControl: Bool) {
-        if toggleSubControl {
-            self.toggleSubcontroller(forceOpen: false)
-        }
+    private func controlDidEndMove() {
         self.panGesture!.isEnabled = false
         self.vibrate()
         switch self.actionTriggered{

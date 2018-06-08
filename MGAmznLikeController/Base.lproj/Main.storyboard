@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iRg-2O-boV">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="597"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
                                 <connections>
                                     <segue destination="UMb-tv-BgP" kind="embed" id="EQk-A0-RHA"/>
                                 </connections>
@@ -35,7 +35,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="iRg-2O-boV" firstAttribute="leading" secondItem="LKn-MI-XBL" secondAttribute="leading" id="5ZT-Nf-yrS"/>
-                            <constraint firstItem="LKn-MI-XBL" firstAttribute="bottom" secondItem="iRg-2O-boV" secondAttribute="bottom" constant="70" id="B4f-Xm-fpl"/>
+                            <constraint firstItem="LKn-MI-XBL" firstAttribute="bottom" secondItem="iRg-2O-boV" secondAttribute="bottom" constant="60" id="B4f-Xm-fpl"/>
                             <constraint firstItem="iRg-2O-boV" firstAttribute="trailing" secondItem="LKn-MI-XBL" secondAttribute="trailing" id="Ob5-00-UaR"/>
                             <constraint firstItem="iRg-2O-boV" firstAttribute="top" secondItem="Ypr-PF-UnG" secondAttribute="top" id="TQQ-cK-23N"/>
                             <constraint firstItem="Vqv-CI-XJ2" firstAttribute="bottom" secondItem="LKn-MI-XBL" secondAttribute="bottom" id="VdA-MO-DmC"/>
@@ -65,10 +65,52 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
                     </navigationBar>
+                    <connections>
+                        <segue destination="fqi-s6-uK0" kind="presentation" identifier="segueToModal" modalPresentationStyle="overFullScreen" modalTransitionStyle="coverVertical" id="oJh-4R-A7F"/>
+                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c0V-Mk-xzG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="724" y="117"/>
+        </scene>
+        <!--ModalVC-->
+        <scene sceneID="Fuc-En-egU">
+            <objects>
+                <viewController storyboardIdentifier="modalVC" id="fqi-s6-uK0" customClass="ModalVC" customModule="MGAmznLikeController" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="H2D-Qa-1yL">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HEY! WE HAVE A MODAL HERE!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Cb-tI-Eu0">
+                                <rect key="frame" x="45" y="291.5" width="285" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sy3-Xo-d38">
+                                <rect key="frame" x="0.0" y="20" width="375" height="255.5"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="0.78145627062706269" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="d3N-aQ-6hD" firstAttribute="trailing" secondItem="Sy3-Xo-d38" secondAttribute="trailing" id="3Hc-jc-CRx"/>
+                            <constraint firstItem="8Cb-tI-Eu0" firstAttribute="top" secondItem="Sy3-Xo-d38" secondAttribute="bottom" constant="16" id="7Ye-qa-kFf"/>
+                            <constraint firstItem="8Cb-tI-Eu0" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="d3N-aQ-6hD" secondAttribute="leading" constant="8" id="C62-92-710"/>
+                            <constraint firstItem="8Cb-tI-Eu0" firstAttribute="centerY" secondItem="H2D-Qa-1yL" secondAttribute="centerY" id="DZL-mU-igO"/>
+                            <constraint firstItem="Sy3-Xo-d38" firstAttribute="top" secondItem="d3N-aQ-6hD" secondAttribute="top" id="NAO-Iy-uyS"/>
+                            <constraint firstItem="Sy3-Xo-d38" firstAttribute="leading" secondItem="d3N-aQ-6hD" secondAttribute="leading" id="PbB-XP-17C"/>
+                            <constraint firstItem="d3N-aQ-6hD" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8Cb-tI-Eu0" secondAttribute="trailing" constant="8" id="T6d-wO-54q"/>
+                            <constraint firstItem="8Cb-tI-Eu0" firstAttribute="centerX" secondItem="H2D-Qa-1yL" secondAttribute="centerX" id="rZl-nh-INP"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="d3N-aQ-6hD"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="Sy3-Xo-d38" id="oNx-Dr-R2U"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XBC-9i-sxS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="724" y="760"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="GZN-3j-I8b">
