@@ -1,15 +1,16 @@
 //
-//  ViewController.swift
+//  MGAmznLikeController.swift
 //  MGAmznLikeController
 //
-//  Created by Marco Guerrieri on 07/06/18.
+//  Created by Marco Guerrieri on 08/06/18.
 //  Copyright © 2018 Marco Guerrieri. All rights reserved.
 //
 
 import AudioToolbox
 import UIKit
 
-class ViewController: UIViewController {
+@IBDesignable
+open class MGAmznLikeController: UIView {
     
     private enum ActionTriggered : Int {
         case noAction
@@ -28,8 +29,7 @@ class ViewController: UIViewController {
         case play
         case pause
     }
-    
-    @IBOutlet weak var containerView: UIView!
+
     @IBOutlet weak var fullContainerView: UIView!
     @IBOutlet weak var tabBarView: UIView!
     @IBOutlet weak var horizontalActionView: UIView!
@@ -46,7 +46,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var subcontrollerHeightCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerVertCenterCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerHoriCenterCnstr: NSLayoutConstraint!
-    
+
+
     private var actionTriggered : ActionTriggered = .noAction
     private var controlMovement : ControlMovement = .noMovement
     private var controlStatus : ControlStatus = .pause
@@ -58,26 +59,68 @@ class ViewController: UIViewController {
     
     private var closedSubcontrollerHeight : CGFloat = 0
     private var openedSubcontrollerHeight : CGFloat = 80
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        commonInit()
+    }
+    
+    func commonInit() {
+        let view : UIView? = Bundle.main.loadNibNamed(String(describing: type(of: self)), owner: self, options: nil)![0] as? UIView
+        if view != nil {
+            addSubview(view!)
+            view?.frame = self.bounds
+        }
+    }
+    
+    override open func awakeFromNib() {
+        super.awakeFromNib()
+        xibSetup()
+    }
+    
+    private func xibSetup(){
         self.subControllerView.alpha = 0
         self.controllerView.isUserInteractionEnabled = true
         self.controllerBckgImg.isUserInteractionEnabled = true
+        self.openedSubcontrollerHeight = self.subcontrollerHeightCnstr.constant
+        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2.5
         self.panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(pan(recognizer:)))
         self.controllerView.addGestureRecognizer(panGesture!)
         self.controllerBckgImg.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(tap(recognizer:))))
         self.controllerBckgImg.addGestureRecognizer(UILongPressGestureRecognizer.init(target: self, action: #selector(longPress(recognizer:))))
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         self.resetController()
-        self.openedSubcontrollerHeight = self.subcontrollerHeightCnstr.constant
-        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2.5
         self.closeSubController(animated: false)
     }
     
+    func loadViewFromNib() -> UIView? {
+        let bundle = Bundle(for: type(of: self))
+        let nib = UINib(nibName: String(describing: type(of: self)), bundle: bundle)
+        return nib.instantiate(
+            withOwner: self,
+            options: nil).first as? UIView
+    }
+    
+    override open func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        xibSetup()
+        fullContainerView?.prepareForInterfaceBuilder()
+        tabBarView?.prepareForInterfaceBuilder()
+        horizontalActionView?.prepareForInterfaceBuilder()
+        subControllerView?.prepareForInterfaceBuilder()
+        controllerView?.prepareForInterfaceBuilder()
+        controllerBckgImg?.prepareForInterfaceBuilder()
+        controllerCentralImg?.prepareForInterfaceBuilder()
+        horizontalActionLeftImage?.prepareForInterfaceBuilder()
+        horizontalActionRightImage?.prepareForInterfaceBuilder()
+    }
+
+
     private func toggleSubcontroller(forceOpen: Bool = false) {
         if self.subcontrollerHeightCnstr.constant == self.closedSubcontrollerHeight || forceOpen {
             // OPEN
@@ -88,7 +131,7 @@ class ViewController: UIViewController {
             closeSubController(animated: true)
         }
     }
-    
+
     private func openSubController(animated: Bool){
         self.subControllerView.isHidden = false
         UIView.animate(withDuration: animated ? 0.25 : 0.0,
@@ -104,7 +147,7 @@ class ViewController: UIViewController {
         }, completion: { (value: Bool) in
         })
     }
-    
+
     private func closeSubController(animated: Bool){
         UIView.animate(withDuration: animated ? 0.055 : 0.0, animations: {
             self.subControllerView.cornerRadius = self.controllerView.frame.size.height / 2
@@ -114,7 +157,7 @@ class ViewController: UIViewController {
             self.subControllerView.isHidden = true
         }
     }
-    
+
     @objc func tap(recognizer: UIPanGestureRecognizer) {
         if controlStatus == .pause {
             print("PLAY")
@@ -127,8 +170,8 @@ class ViewController: UIViewController {
             print("PAUSE")
         }
     }
-    
-    
+
+
     @objc func longPress(recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .began {
             self.vibrate()
@@ -160,10 +203,10 @@ class ViewController: UIViewController {
         self.panGesture!.isEnabled = true
     }
 
-    
+
     @objc func pan(recognizer: UIPanGestureRecognizer) {
-        let yMove = max(0, -recognizer.translation(in: self.view).y)
-        let xMove = recognizer.translation(in: self.view).x
+        let yMove = max(0, -recognizer.translation(in: self).y)
+        let xMove = recognizer.translation(in: self).x
         if recognizer.state == UIGestureRecognizerState.changed {
             if self.controlMovement == .noMovement {
                 if abs(yMove) > abs(xMove) {
@@ -242,9 +285,9 @@ class ViewController: UIViewController {
         else if recognizer.state == UIGestureRecognizerState.ended {
             self.controlDidEndMove(toggleSubControl: controlMovement == .vertical && self.actionTriggered == .noAction)
         }
-
+        
     }
-    
+
     func controlDidEndMove(toggleSubControl: Bool) {
         if toggleSubControl {
             self.toggleSubcontroller(forceOpen: false)
@@ -269,7 +312,7 @@ class ViewController: UIViewController {
         }
         self.resetController()
     }
-    
+
     func vibrate() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
@@ -278,43 +321,43 @@ class ViewController: UIViewController {
     func leftActionTriggered() {
         print("LEFT ACTION TRIGGERED")
     }
-    
+
     func rightActionTriggered() {
         print("RIGHT ACTION TRIGGERED")
     }
-    
+
     func topActionTriggered() {
         print("TOP ACTION TRIGGERED")
     }
-    
+
     @IBAction func firstTabBarPressed(_ sender: Any) {
         print("FIRST TAB BAR PRESSED")
     }
-    
+
     @IBAction func secondTabBarPressed(_ sender: Any) {
         print("SECOND TAB BAR PRESSED")
     }
-    
+
     @IBAction func thirdTabBarPressed(_ sender: Any) {
         print("THIRD TAB BAR PRESSED")
     }
-    
+
     @IBAction func fourthTabBarPressed(_ sender: Any) {
         print("FOURTH TAB BAR PRESSED")
     }
-    
+
     @IBAction func firstSubControlPressed(_ sender: Any) {
         print("FIRST SUB CONTROL PRESSED")
     }
-    
+
     @IBAction func secondSubControlPressed(_ sender: Any) {
         print("SECOND SUB CONTROL PRESSED")
     }
-    
+
     @IBAction func thirdSubControlPressed(_ sender: Any) {
         print("THIRD SUB CONTROL PRESSED")
     }
-    
+
     @IBAction func fourthSubControlPressed(_ sender: Any) {
         print("FOURTH SUB CONTROL PRESSED")
     }
