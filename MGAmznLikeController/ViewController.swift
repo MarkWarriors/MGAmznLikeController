@@ -65,7 +65,7 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         resetController()
-        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 3
+        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2.5
     }
     
     @objc func tap(recognizer: UIPanGestureRecognizer){
@@ -92,7 +92,7 @@ class ViewController: UIViewController {
     func resetController(){
         UIView.animate(withDuration: TimeInterval(0.3),
                        delay: 0,
-                       usingSpringWithDamping: 0.5,
+                       usingSpringWithDamping: 0.4,
                        initialSpringVelocity: 1,
                        options: UIViewAnimationOptions.curveEaseIn,
                        animations: {
@@ -143,14 +143,14 @@ class ViewController: UIViewController {
         else {
             switch self.controlMovement{
             case .horizontal:
-                let controllerMove = xMove / 3
+                let controllerMove = xMove / 2.5
                 self.controllerHoriCenterCnstr.constant = controllerMove
                 self.horizontalActionView.alpha = min(abs(controllerMove/(self.maxHorizontalMovement)), 0.8)
                 
                 if xMove > 0 {
                     self.horizontalActionLeftImage.isHidden = true
                     self.horizontalActionRightImage.isHidden = false
-                    self.horizontalActionRightCnstr.constant = min(self.maxHorizontalMovement * 2, xMove * 2)
+                    self.horizontalActionRightCnstr.constant = min(self.maxHorizontalMovement*1.5, xMove * 1.2 )
                     self.horizontalActionLeftCnstr.constant = self.controllerView.frame.size.width / 2
                     
                     if self.actionTriggered != .rightAction && xMove > (self.maxHorizontalMovement / 2) {
@@ -164,7 +164,7 @@ class ViewController: UIViewController {
                 else {
                     self.horizontalActionLeftImage.isHidden = false
                     self.horizontalActionRightImage.isHidden = true
-                    self.horizontalActionLeftCnstr.constant = max(-self.maxHorizontalMovement * 2, xMove * 2)
+                    self.horizontalActionLeftCnstr.constant = max(-self.maxHorizontalMovement*1.5, xMove * 1.2)
                     self.horizontalActionRightCnstr.constant = -self.controllerView.frame.size.width / 2
                     
                     if self.actionTriggered != .leftAction && xMove < -(self.maxHorizontalMovement / 2) {
