@@ -131,7 +131,8 @@ import UIKit
         self.controllerBckgImg.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(tap(recognizer:))))
         self.controllerBckgImg.addGestureRecognizer(UILongPressGestureRecognizer.init(target: self, action: #selector(longPress(recognizer:))))
         self.resetController()
-        self.closeSubController(animated: false)
+        self.subControllerView.mgalcCornerRadius = self.controllerView.frame.size.height / 2
+        self.subcontrollerHeightCnstr.constant = self.closedSubcontrollerHeight
         self.controllerCentralImg.image = self.controlImageForStatus[self.controlStatus] ?? nil
     }
     
@@ -334,7 +335,7 @@ import UIKit
             if controlMovement == .vertical && self.actionTriggered == .noAction{
                 self.toggleSubcontroller()
             }
-            else {
+            else if self.subcontrollerHeightCnstr.constant == self.openedSubcontrollerHeight {
                 self.closeSubController(animated: true)
             }
             self.controlDidEndMove()
