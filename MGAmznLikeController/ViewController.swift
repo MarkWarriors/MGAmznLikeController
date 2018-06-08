@@ -65,7 +65,7 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         resetController()
-        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2
+        self.maxHorizontalMovement = self.controllerView.frame.origin.x / 3
     }
     
     @objc func tap(recognizer: UIPanGestureRecognizer){
@@ -84,14 +84,25 @@ class ViewController: UIViewController {
     
     @objc func longPress(recognizer: UIPanGestureRecognizer){
         if recognizer.state == .began {
+            self.vibrate()
             self.subControllerView.isHidden = !self.subControllerView.isHidden
         }
     }
 
-    
     func resetController(){
-        self.controllerVertCenterCnstr.constant = 0
-        self.controllerHoriCenterCnstr.constant = 0
+        UIView.animate(withDuration: TimeInterval(0.3),
+                       delay: 0,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 1,
+                       options: UIViewAnimationOptions.curveEaseIn,
+                       animations: {
+                        self.controllerVertCenterCnstr.constant = 0
+                        self.controllerHoriCenterCnstr.constant = 0
+                        self.view.layoutSubviews()
+        }, completion: {
+            //Code to run after animating
+            (value: Bool) in
+        })
         self.horizontalActionRightCnstr.constant = -self.controllerView.frame.size.width / 2
         self.horizontalActionLeftCnstr.constant = self.controllerView.frame.size.width / 2
         self.horizontalActionView.alpha = 0
@@ -132,14 +143,16 @@ class ViewController: UIViewController {
         else {
             switch self.controlMovement{
             case .horizontal:
-                self.controllerHoriCenterCnstr.constant = xMove / 2
+                let controllerMove = xMove / 3
+                self.controllerHoriCenterCnstr.constant = controllerMove
+                self.horizontalActionView.alpha = min(abs(controllerMove/(self.maxHorizontalMovement)), 0.8)
                 
-                self.horizontalActionView.alpha = min(abs((xMove / 2)/(self.maxHorizontalMovement)), 0.8)
                 if xMove > 0 {
                     self.horizontalActionLeftImage.isHidden = true
                     self.horizontalActionRightImage.isHidden = false
-                    self.horizontalActionRightCnstr.constant = min(self.maxHorizontalMovement, xMove)
+                    self.horizontalActionRightCnstr.constant = min(self.maxHorizontalMovement * 2, xMove * 2)
                     self.horizontalActionLeftCnstr.constant = self.controllerView.frame.size.width / 2
+                    
                     if self.actionTriggered != .rightAction && xMove > (self.maxHorizontalMovement / 2) {
                        self.actionTriggered = .rightAction
                         self.vibrate()
@@ -151,13 +164,14 @@ class ViewController: UIViewController {
                 else {
                     self.horizontalActionLeftImage.isHidden = false
                     self.horizontalActionRightImage.isHidden = true
-                    self.horizontalActionLeftCnstr.constant = max(-self.maxHorizontalMovement, xMove)
+                    self.horizontalActionLeftCnstr.constant = max(-self.maxHorizontalMovement * 2, xMove * 2)
                     self.horizontalActionRightCnstr.constant = -self.controllerView.frame.size.width / 2
-                    if self.actionTriggered != .leftAction && xMove < -(self.maxHorizontalMovement) {
+                    
+                    if self.actionTriggered != .leftAction && xMove < -(self.maxHorizontalMovement / 2) {
                         self.actionTriggered = .leftAction
                         self.vibrate()
                     }
-                    else if self.actionTriggered == .leftAction && xMove > -(self.maxHorizontalMovement){
+                    else if self.actionTriggered == .leftAction && xMove > -(self.maxHorizontalMovement / 2) {
                         self.actionTriggered = .noAction
                     }
                 }
