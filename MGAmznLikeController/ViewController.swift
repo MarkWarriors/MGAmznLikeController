@@ -70,7 +70,7 @@ class ViewController: UIViewController {
         self.maxHorizontalMovement = self.controllerView.frame.origin.x / 2.5
     }
     
-    @objc func tap(recognizer: UIPanGestureRecognizer){
+    @objc func tap(recognizer: UIPanGestureRecognizer) {
         if controlStatus == .pause {
             print("PLAY")
             controlStatus = .play
@@ -84,14 +84,14 @@ class ViewController: UIViewController {
     }
     
     
-    @objc func longPress(recognizer: UIPanGestureRecognizer){
+    @objc func longPress(recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .began {
             self.vibrate()
             self.subControllerView.isHidden = !self.subControllerView.isHidden
         }
     }
 
-    func resetController(){
+    func resetController() {
         UIView.animate(withDuration: TimeInterval(0.3),
                        delay: 0,
                        usingSpringWithDamping: 0.4,
@@ -202,7 +202,7 @@ class ViewController: UIViewController {
 
     }
     
-    func controlDidEndMove(showSubcontrol: Bool){
+    func controlDidEndMove(showSubcontrol: Bool) {
         self.subControllerView.isHidden = !showSubcontrol
         self.panGesture!.isEnabled = false
         self.vibrate()
@@ -225,20 +225,20 @@ class ViewController: UIViewController {
         self.resetController()
     }
     
-    func vibrate(){
+    func vibrate() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
     }
 
-    func leftActionTriggered(){
+    func leftActionTriggered() {
         print("LEFT ACTION TRIGGERED")
     }
     
-    func rightActionTriggered(){
+    func rightActionTriggered() {
         print("RIGHT ACTION TRIGGERED")
     }
     
-    func topActionTriggered(){
+    func topActionTriggered() {
         print("TOP ACTION TRIGGERED")
     }
     
