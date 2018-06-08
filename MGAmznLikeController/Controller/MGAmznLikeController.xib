@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -8,7 +8,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,30 +18,38 @@
                 <outlet property="controllerHoriCenterCnstr" destination="d72-cn-Obw" id="nUV-Ey-YqI"/>
                 <outlet property="controllerVertCenterCnstr" destination="L1E-IE-2Ky" id="NbB-YP-aSF"/>
                 <outlet property="controllerView" destination="wII-a2-ndF" id="W4n-mF-PGn"/>
+                <outlet property="firstSubControllerBnt" destination="S4X-xI-jhl" id="c5m-Sd-W5I"/>
+                <outlet property="firstTabBarBnt" destination="jPX-qs-XI3" id="PdP-VX-yHC"/>
+                <outlet property="fourthSubControllerBnt" destination="hkh-km-2Zx" id="7Wo-4K-XvG"/>
+                <outlet property="fourthTabBarBnt" destination="haE-k7-1SR" id="gjn-I0-jaN"/>
                 <outlet property="fullContainerView" destination="Xql-2c-Vi6" id="Ycl-IL-pLm"/>
                 <outlet property="horizontalActionLeftCnstr" destination="yV7-EZ-Xeg" id="Jh9-cy-oBF"/>
                 <outlet property="horizontalActionLeftImage" destination="jEB-AR-FDL" id="KYB-zy-7H6"/>
                 <outlet property="horizontalActionRightCnstr" destination="w5M-EM-sHu" id="sdj-rv-pDB"/>
                 <outlet property="horizontalActionRightImage" destination="iWa-pm-qWV" id="7KA-qd-IDN"/>
                 <outlet property="horizontalActionView" destination="1P6-d1-bN3" id="cme-5i-0CA"/>
+                <outlet property="secondSubControllerBnt" destination="825-RF-53q" id="gav-f3-GH4"/>
+                <outlet property="secondTabBarBnt" destination="AWL-D1-C2c" id="tu3-dV-NcW"/>
                 <outlet property="subControllerView" destination="Sq8-C7-0VY" id="5BV-SD-fz1"/>
                 <outlet property="subcontrollerHeightCnstr" destination="Koc-ir-k4L" id="at8-eu-Yxs"/>
                 <outlet property="tabBarView" destination="Kdb-LB-EiF" id="6cC-hx-dar"/>
+                <outlet property="thirdSubControllerBnt" destination="Mpf-TT-6iE" id="WUP-8n-kM9"/>
+                <outlet property="thirdTabBarBnt" destination="NpU-u7-012" id="ynW-7B-OVH"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="349" height="168"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xql-2c-Vi6">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <rect key="frame" x="0.0" y="0.0" width="349" height="168"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kdb-LB-EiF">
-                            <rect key="frame" x="0.0" y="597" width="375" height="70"/>
+                            <rect key="frame" x="0.0" y="98" width="349" height="70"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jPX-qs-XI3">
-                                    <rect key="frame" x="0.0" y="0.0" width="62.5" height="70"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="58.5" height="70"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                     <state key="normal" title="1">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -52,7 +59,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AWL-D1-C2c">
-                                    <rect key="frame" x="62.5" y="0.0" width="62.5" height="70"/>
+                                    <rect key="frame" x="58.5" y="0.0" width="58.5" height="70"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                     <state key="normal" title="2">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -62,7 +69,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NpU-u7-012">
-                                    <rect key="frame" x="250" y="0.0" width="62.5" height="70"/>
+                                    <rect key="frame" x="232" y="0.0" width="58.5" height="70"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                     <state key="normal" title="3">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -72,7 +79,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="haE-k7-1SR">
-                                    <rect key="frame" x="312.5" y="0.0" width="62.5" height="70"/>
+                                    <rect key="frame" x="290.5" y="0.0" width="58.5" height="70"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                     <state key="normal" title="4">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -108,7 +115,7 @@
                             </constraints>
                         </view>
                         <view alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1P6-d1-bN3">
-                            <rect key="frame" x="35" y="597" width="305" height="70"/>
+                            <rect key="frame" x="22" y="98" width="305" height="70"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="right_arrow_white.png" translatesAutoresizingMaskIntoConstraints="NO" id="iWa-pm-qWV">
                                     <rect key="frame" x="268" y="4" width="33" height="62"/>
@@ -134,7 +141,7 @@
                             </constraints>
                         </view>
                         <view clipsSubviews="YES" alpha="0.80000001192092896" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sq8-C7-0VY">
-                            <rect key="frame" x="99.5" y="544.5" width="175" height="175"/>
+                            <rect key="frame" x="86.5" y="45.5" width="175" height="175"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S4X-xI-jhl">
                                     <rect key="frame" x="0.0" y="67" width="34" height="41"/>
@@ -203,19 +210,25 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wII-a2-ndF">
-                            <rect key="frame" x="135" y="579" width="105" height="105"/>
+                            <rect key="frame" x="122" y="80" width="105" height="105"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="doge.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="3NI-4E-19P">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3NI-4E-19P">
                                     <rect key="frame" x="0.0" y="0.0" width="105" height="105"/>
                                     <constraints>
                                         <constraint firstAttribute="width" secondItem="3NI-4E-19P" secondAttribute="height" multiplier="1:1" id="tiq-b6-HRa"/>
                                     </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="mgalcRoundView" value="YES"/>
+                                    </userDefinedRuntimeAttributes>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="pause_icon.png" translatesAutoresizingMaskIntoConstraints="NO" id="3Qc-Rc-fIk">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Qc-Rc-fIk">
                                     <rect key="frame" x="25.5" y="26.5" width="52.5" height="52.5"/>
                                     <constraints>
                                         <constraint firstAttribute="width" secondItem="3Qc-Rc-fIk" secondAttribute="height" multiplier="1:1" id="ZIa-lF-yde"/>
                                     </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="boolean" keyPath="mgalcRoundView" value="YES"/>
+                                    </userDefinedRuntimeAttributes>
                                 </imageView>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -230,6 +243,7 @@
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="roundView" value="YES"/>
+                                <userDefinedRuntimeAttribute type="boolean" keyPath="mgalcRoundView" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </view>
                     </subviews>
@@ -260,21 +274,19 @@
                     </userDefinedRuntimeAttributes>
                 </view>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="Xql-2c-Vi6" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="9Ak-PF-WrH"/>
-                <constraint firstItem="Xql-2c-Vi6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="F1T-ku-4CJ"/>
-                <constraint firstItem="Xql-2c-Vi6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="NYA-M1-i4W"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Xql-2c-Vi6" secondAttribute="bottom" id="ScR-dx-hcG"/>
+                <constraint firstItem="Xql-2c-Vi6" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="F1T-ku-4CJ"/>
+                <constraint firstItem="Xql-2c-Vi6" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="NYA-M1-i4W"/>
+                <constraint firstAttribute="bottom" secondItem="Xql-2c-Vi6" secondAttribute="bottom" id="ScR-dx-hcG"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="28.5" y="50.5"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-53.5" y="299"/>
         </view>
     </objects>
     <resources>
-        <image name="doge.jpg" width="800" height="450"/>
         <image name="left_arrow_white.png" width="162" height="290"/>
-        <image name="pause_icon.png" width="150" height="150"/>
         <image name="right_arrow_white.png" width="162" height="290"/>
     </resources>
 </document>

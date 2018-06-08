@@ -9,14 +9,26 @@
 import AudioToolbox
 import UIKit
 
+
+@objc public protocol MGALCDelegate {
+    @objc optional func didTapController(controlStatus: MGAmznLikeController.ControlStatus)
+    @objc optional func didTapOnSubControllerAt(index: Int, sender: UIButton?)
+    @objc optional func didTapOnTabBarAt(index: Int, sender: UIButton?)
+    @objc optional func didPerformSwipeAction(trigger: MGAmznLikeController.ActionTriggered)
+    @objc optional func didOpenSubController()
+    @objc optional func didCloseSubController()
+    @objc optional func willOpenSubController()
+    @objc optional func willCloseSubController()
+}
+
 @IBDesignable
-open class MGAmznLikeController: UIView {
+@objc open class MGAmznLikeController: UIView {
     
-    private enum ActionTriggered : Int {
-        case noAction
-        case topAction
-        case leftAction
-        case rightAction
+    @objc public enum ActionTriggered : Int {
+        case noAction = -1
+        case topAction = 1
+        case leftAction = 2
+        case rightAction = 3
     }
     
     private enum ControlMovement : Int {
@@ -25,9 +37,9 @@ open class MGAmznLikeController: UIView {
         case horizontal
     }
     
-    private enum ControlStatus : Int {
-        case play
-        case pause
+    @objc public enum ControlStatus : Int {
+        case play = 1
+        case pause = 0
     }
 
     @IBOutlet weak var fullContainerView: UIView!
@@ -47,6 +59,16 @@ open class MGAmznLikeController: UIView {
     @IBOutlet weak var controllerVertCenterCnstr: NSLayoutConstraint!
     @IBOutlet weak var controllerHoriCenterCnstr: NSLayoutConstraint!
 
+    @IBOutlet weak var firstSubControllerBnt: UIButton!
+    @IBOutlet weak var secondSubControllerBnt: UIButton!
+    @IBOutlet weak var thirdSubControllerBnt: UIButton!
+    @IBOutlet weak var fourthSubControllerBnt: UIButton!
+    
+    @IBOutlet weak var firstTabBarBnt: UIButton!
+    @IBOutlet weak var secondTabBarBnt: UIButton!
+    @IBOutlet weak var thirdTabBarBnt: UIButton!
+    @IBOutlet weak var fourthTabBarBnt: UIButton!
+    
 
     private var actionTriggered : ActionTriggered = .noAction
     private var controlMovement : ControlMovement = .noMovement
@@ -59,7 +81,14 @@ open class MGAmznLikeController: UIView {
     
     private var closedSubcontrollerHeight : CGFloat = 0
     private var openedSubcontrollerHeight : CGFloat = 80
+    
+    public private(set) var controlImageForStatus : [ControlStatus:UIImage] = [:]
+    public private(set) var canVibrate : Bool = true
+    public private(set) var vibrationType : UIImpactFeedbackStyle = .light
+    
+    public var delegate: MGALCDelegate?
 
+    // MARK: LAYOUT INITIALIZATION
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -72,11 +101,17 @@ open class MGAmznLikeController: UIView {
     }
     
     func commonInit() {
-        let view : UIView? = Bundle.main.loadNibNamed(String(describing: type(of: self)), owner: self, options: nil)![0] as? UIView
-        if view != nil {
-            addSubview(view!)
-            view?.frame = self.bounds
-        }
+        let customViewNib = loadFromNib()
+        customViewNib.frame = bounds
+        customViewNib.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
+        addSubview(customViewNib)
+    }
+    
+    func loadFromNib() -> UIView {
+        let bundle = Bundle(for: type(of: self))
+        let nib = UINib(nibName: String(describing: type(of: self)), bundle: bundle)
+        let view = nib.instantiate(withOwner: self, options: nil).first as! UIView
+        return view
     }
     
     override open func awakeFromNib() {
@@ -96,19 +131,12 @@ open class MGAmznLikeController: UIView {
         self.controllerBckgImg.addGestureRecognizer(UILongPressGestureRecognizer.init(target: self, action: #selector(longPress(recognizer:))))
         self.resetController()
         self.closeSubController(animated: false)
+        self.controllerCentralImg.image = self.controlImageForStatus[self.controlStatus] ?? nil
     }
     
-    func loadViewFromNib() -> UIView? {
-        let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: String(describing: type(of: self)), bundle: bundle)
-        return nib.instantiate(
-            withOwner: self,
-            options: nil).first as? UIView
-    }
-    
+
     override open func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
-        xibSetup()
         fullContainerView?.prepareForInterfaceBuilder()
         tabBarView?.prepareForInterfaceBuilder()
         horizontalActionView?.prepareForInterfaceBuilder()
@@ -120,14 +148,32 @@ open class MGAmznLikeController: UIView {
         horizontalActionRightImage?.prepareForInterfaceBuilder()
     }
 
-
+    
+    // MARK: CALLABLE FUNCTIONS
+    public func changeVibration(active: Bool, type: UIImpactFeedbackStyle? = nil){
+        self.canVibrate = active
+        self.vibrationType = type ?? .light
+    }
+    
+    public func setControlImage(_ image: UIImage?, forStatus status: ControlStatus) {
+        self.controlImageForStatus[status] = image
+        self.controllerCentralImg.image = self.controlImageForStatus[self.controlStatus] ?? nil
+    }
+    
+    public func setControlBackgroundImage(_ image: UIImage?) {
+        self.controllerBckgImg.image = image
+    }
+    
+    // MARK: PRIVATE METHODS (ALMOST)
     private func toggleSubcontroller(forceOpen: Bool = false) {
         if self.subcontrollerHeightCnstr.constant == self.closedSubcontrollerHeight || forceOpen {
             // OPEN
+            self.delegate?.willOpenSubController?()
             openSubController(animated: true)
         }
         else {
             // CLOSE
+            self.delegate?.willCloseSubController?()
             closeSubController(animated: true)
         }
     }
@@ -140,47 +186,48 @@ open class MGAmznLikeController: UIView {
                        initialSpringVelocity: 0.35,
                        options: UIViewAnimationOptions.curveEaseIn,
                        animations: {
-                        self.subControllerView.cornerRadius = (self.controllerView.frame.size.height / 2 + self.openedSubcontrollerHeight / 2)
+                        self.subControllerView.mgalcCornerRadius = (self.controllerView.frame.size.height / 2 + self.openedSubcontrollerHeight / 2)
                         self.subcontrollerHeightCnstr.constant = self.openedSubcontrollerHeight
                         self.fullContainerView.layoutSubviews()
                         
         }, completion: { (value: Bool) in
+            self.delegate?.didOpenSubController?()
         })
     }
 
     private func closeSubController(animated: Bool){
         UIView.animate(withDuration: animated ? 0.055 : 0.0, animations: {
-            self.subControllerView.cornerRadius = self.controllerView.frame.size.height / 2
+            self.subControllerView.mgalcCornerRadius = self.controllerView.frame.size.height / 2
             self.subcontrollerHeightCnstr.constant = self.closedSubcontrollerHeight
             self.fullContainerView.layoutSubviews()
         }) { (success) in
             self.subControllerView.isHidden = true
+            self.delegate?.didCloseSubController?()
         }
     }
 
-    @objc func tap(recognizer: UIPanGestureRecognizer) {
+    @objc private func tap(recognizer: UIPanGestureRecognizer) {
+        self.delegate?.didTapController?(controlStatus: controlStatus)
         if controlStatus == .pause {
-            print("PLAY")
             controlStatus = .play
             controllerCentralImg.image = UIImage.init(named: "play_icon.png")
         }
         else {
             controlStatus = .pause
             controllerCentralImg.image = UIImage.init(named: "pause_icon.png")
-            print("PAUSE")
         }
     }
 
 
-    @objc func longPress(recognizer: UIPanGestureRecognizer) {
+    @objc private func longPress(recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .began {
             self.vibrate()
             toggleSubcontroller()
         }
     }
 
-    func resetController() {
-        UIView.animate(withDuration: 0.3,
+    @objc public func resetController(animated: Bool = false) {
+        UIView.animate(withDuration: animated ? 0.3 : 0,
                        delay: 0,
                        usingSpringWithDamping: 0.4,
                        initialSpringVelocity: 1,
@@ -204,7 +251,7 @@ open class MGAmznLikeController: UIView {
     }
 
 
-    @objc func pan(recognizer: UIPanGestureRecognizer) {
+    @objc private func pan(recognizer: UIPanGestureRecognizer) {
         let yMove = max(0, -recognizer.translation(in: self).y)
         let xMove = recognizer.translation(in: self).x
         if recognizer.state == UIGestureRecognizerState.changed {
@@ -288,7 +335,7 @@ open class MGAmznLikeController: UIView {
         
     }
 
-    func controlDidEndMove(toggleSubControl: Bool) {
+    private func controlDidEndMove(toggleSubControl: Bool) {
         if toggleSubControl {
             self.toggleSubcontroller(forceOpen: false)
         }
@@ -313,53 +360,80 @@ open class MGAmznLikeController: UIView {
         self.resetController()
     }
 
-    func vibrate() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
+    private func vibrate() {
+        if canVibrate {
+            let generator = UIImpactFeedbackGenerator(style: vibrationType)
+            generator.impactOccurred()
+        }
     }
 
-    func leftActionTriggered() {
-        print("LEFT ACTION TRIGGERED")
+    private func leftActionTriggered() {
+        self.delegate?.didPerformSwipeAction?(trigger: .leftAction)
     }
 
-    func rightActionTriggered() {
-        print("RIGHT ACTION TRIGGERED")
+    private func rightActionTriggered() {
+        self.delegate?.didPerformSwipeAction?(trigger: .rightAction)
     }
 
-    func topActionTriggered() {
-        print("TOP ACTION TRIGGERED")
+    private func topActionTriggered() {
+        self.delegate?.didPerformSwipeAction?(trigger: .topAction)
     }
 
     @IBAction func firstTabBarPressed(_ sender: Any) {
-        print("FIRST TAB BAR PRESSED")
+        self.delegate?.didTapOnTabBarAt?(index: 0, sender: sender as? UIButton)
     }
 
     @IBAction func secondTabBarPressed(_ sender: Any) {
-        print("SECOND TAB BAR PRESSED")
+        self.delegate?.didTapOnTabBarAt?(index: 1, sender: sender as? UIButton)
     }
 
     @IBAction func thirdTabBarPressed(_ sender: Any) {
-        print("THIRD TAB BAR PRESSED")
+        self.delegate?.didTapOnTabBarAt?(index: 2, sender: sender as? UIButton)
     }
 
     @IBAction func fourthTabBarPressed(_ sender: Any) {
-        print("FOURTH TAB BAR PRESSED")
+        self.delegate?.didTapOnTabBarAt?(index: 3, sender: sender as? UIButton)
     }
 
     @IBAction func firstSubControlPressed(_ sender: Any) {
-        print("FIRST SUB CONTROL PRESSED")
+        self.delegate?.didTapOnSubControllerAt?(index: 0, sender: sender as? UIButton)
     }
 
     @IBAction func secondSubControlPressed(_ sender: Any) {
-        print("SECOND SUB CONTROL PRESSED")
+        self.delegate?.didTapOnSubControllerAt?(index: 1, sender: sender as? UIButton)
     }
 
     @IBAction func thirdSubControlPressed(_ sender: Any) {
-        print("THIRD SUB CONTROL PRESSED")
+        self.delegate?.didTapOnSubControllerAt?(index: 2, sender: sender as? UIButton)
     }
 
     @IBAction func fourthSubControlPressed(_ sender: Any) {
-        print("FOURTH SUB CONTROL PRESSED")
+        self.delegate?.didTapOnSubControllerAt?(index: 3, sender: sender as? UIButton)
     }
+    
 }
 
+
+fileprivate extension UIView {
+    
+    @IBInspectable var mgalcCornerRadius: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            layer.cornerRadius = newValue
+            layer.masksToBounds = newValue > 0
+        }
+    }
+
+    @IBInspectable var mgalcRoundView: Bool {
+        get {
+            return self.mgalcRoundView
+        }
+        set {
+            layer.cornerRadius = self.frame.height/2
+            layer.masksToBounds = true
+        }
+    }
+    
+}
