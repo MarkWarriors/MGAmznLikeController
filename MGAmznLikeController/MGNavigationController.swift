@@ -28,9 +28,9 @@ class MGNavigationController: UINavigationController, MGALCDelegate {
     public var mgController: MGAmznLikeController?{
         didSet {
             self.mgController!.delegate = self
-            self.mgController!.setControlBackgroundImage(dogeImages[0])
-            self.mgController!.setControlImage(UIImage.init(named: "play_icon.png"), forStatus: MGAmznLikeController.ControlStatus.play)
-            self.mgController!.setControlImage(UIImage.init(named: "pause_icon.png"), forStatus: MGAmznLikeController.ControlStatus.pause)
+            self.mgController!.setControllerBackgroundImage(dogeImages[0])
+            self.mgController!.setControllerImage(UIImage.init(named: "play_icon.png"), forStatus: MGAmznLikeController.ControllerStatus.play)
+            self.mgController!.setControllerImage(UIImage.init(named: "pause_icon.png"), forStatus: MGAmznLikeController.ControllerStatus.pause)
             
         }
     }
@@ -63,8 +63,8 @@ class MGNavigationController: UINavigationController, MGALCDelegate {
         }
     }
     
-    func didTapController(controlStatus: MGAmznLikeController.ControlStatus) {
-        printLogIfIsInFirstVC("TAP CONTROLLER: \(controlStatus.rawValue)")
+    func didTapController(controllerStatus: MGAmznLikeController.ControllerStatus) {
+        printLogIfIsInFirstVC("TAP CONTROLLER: \(controllerStatus.rawValue)")
     }
     
     func didTapOnSubControllerAt(index: Int, sender: UIButton?) {
@@ -106,14 +106,14 @@ class MGNavigationController: UINavigationController, MGALCDelegate {
             if previousIndex == -1 {
                 previousIndex = self.dogeImages.count - 1
             }
-            self.mgController?.setControlBackgroundImage(dogeImages[previousIndex])
+            self.mgController?.setControllerBackgroundImage(dogeImages[previousIndex])
             break
         case .rightAction:
             var nextIndex = (self.dogeImages.index(of: self.mgController?.controllerBckgImg.image) ?? -1) + 1
             if nextIndex == self.dogeImages.count {
                 nextIndex = 0
             }
-            self.mgController?.setControlBackgroundImage(dogeImages[nextIndex])
+            self.mgController?.setControllerBackgroundImage(dogeImages[nextIndex])
             break
         case .noAction:
             break

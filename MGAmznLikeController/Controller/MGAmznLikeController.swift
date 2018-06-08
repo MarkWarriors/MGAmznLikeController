@@ -11,7 +11,7 @@ import UIKit
 
 
 @objc public protocol MGALCDelegate {
-    @objc optional func didTapController(controlStatus: MGAmznLikeController.ControlStatus)
+    @objc optional func didTapController(controllerStatus: MGAmznLikeController.ControllerStatus)
     @objc optional func didTapOnSubControllerAt(index: Int, sender: UIButton?)
     @objc optional func didTapOnTabBarAt(index: Int, sender: UIButton?)
     @objc optional func didPerformSwipeAction(trigger: MGAmznLikeController.ActionTriggered)
@@ -31,13 +31,13 @@ import UIKit
         case rightAction = 3
     }
     
-    private enum ControlMovement : Int {
+    private enum ControllerMovement : Int {
         case noMovement
         case vertical
         case horizontal
     }
     
-    @objc public enum ControlStatus : Int {
+    @objc public enum ControllerStatus : Int {
         case play = 1
         case pause = 0
     }
@@ -72,8 +72,8 @@ import UIKit
     
 
     private var actionTriggered : ActionTriggered = .noAction
-    private var controlMovement : ControlMovement = .noMovement
-    private var controlStatus : ControlStatus = .pause
+    private var controllerMovement : ControllerMovement = .noMovement
+    private var controllerStatus : ControllerStatus = .pause
     private var panGesture : UIPanGestureRecognizer?
     private var maxHorizontalMovement : CGFloat = 0
     private let horizontalTriggerPoint : CGFloat = 50
@@ -83,7 +83,7 @@ import UIKit
     private var closedSubcontrollerHeight : CGFloat = 0
     private var openedSubcontrollerHeight : CGFloat = 80
     
-    public private(set) var controlImageForStatus : [ControlStatus:UIImage] = [:]
+    public private(set) var controllerImageForStatus : [ControllerStatus:UIImage] = [:]
     public private(set) var canVibrate : Bool = true
     public private(set) var vibrationType : UIImpactFeedbackStyle = .light
     
@@ -133,7 +133,7 @@ import UIKit
         self.resetController()
         self.subControllerView.mgalcCornerRadius = self.controllerView.frame.size.height / 2
         self.subcontrollerHeightCnstr.constant = self.closedSubcontrollerHeight
-        self.controllerCentralImg.image = self.controlImageForStatus[self.controlStatus] ?? nil
+        self.controllerCentralImg.image = self.controllerImageForStatus[self.controllerStatus] ?? nil
     }
     
 
@@ -157,12 +157,12 @@ import UIKit
         self.vibrationType = type ?? .light
     }
     
-    public func setControlImage(_ image: UIImage?, forStatus status: ControlStatus) {
-        self.controlImageForStatus[status] = image
-        self.controllerCentralImg.image = self.controlImageForStatus[self.controlStatus] ?? nil
+    public func setControllerImage(_ image: UIImage?, forStatus status: ControllerStatus) {
+        self.controllerImageForStatus[status] = image
+        self.controllerCentralImg.image = self.controllerImageForStatus[self.controllerStatus] ?? nil
     }
     
-    public func setControlBackgroundImage(_ image: UIImage?) {
+    public func setControllerBackgroundImage(_ image: UIImage?) {
         self.controllerBckgImg.image = image
     }
     
@@ -209,15 +209,15 @@ import UIKit
     }
 
     @objc private func tap(recognizer: UIPanGestureRecognizer) {
-        self.delegate?.didTapController?(controlStatus: controlStatus)
-        if controlStatus == .pause {
-            controlStatus = .play
+        if controllerStatus == .pause {
+            controllerStatus = .play
             controllerCentralImg.image = UIImage.init(named: "play_icon.png")
         }
         else {
-            controlStatus = .pause
+            controllerStatus = .pause
             controllerCentralImg.image = UIImage.init(named: "pause_icon.png")
         }
+        self.delegate?.didTapController?(controllerStatus: controllerStatus)
     }
 
 
@@ -247,7 +247,7 @@ import UIKit
         self.horizontalActionView.alpha = 0
         self.subControllerView.alpha = 0.8
         self.controllerView.alpha = 1
-        self.controlMovement = .noMovement
+        self.controllerMovement = .noMovement
         self.actionTriggered = .noAction
         self.panGesture!.isEnabled = true
     }
@@ -257,24 +257,24 @@ import UIKit
         let yMove = max(0, -recognizer.translation(in: self).y)
         let xMove = recognizer.translation(in: self).x
         if recognizer.state == UIGestureRecognizerState.changed {
-            if self.controlMovement == .noMovement {
+            if self.controllerMovement == .noMovement {
                 if abs(yMove) > abs(xMove) {
-                    self.controlMovement = .vertical
+                    self.controllerMovement = .vertical
                 }
                 else if abs(yMove) < abs(xMove) {
-                    self.controlMovement = .horizontal
+                    self.controllerMovement = .horizontal
                 }
                 else {
                     return
                 }
             }
             
-            if self.subcontrollerHeightCnstr.constant > 0 && self.controlMovement == .horizontal {
-                self.controlMovement = .noMovement
+            if self.subcontrollerHeightCnstr.constant > 0 && self.controllerMovement == .horizontal {
+                self.controllerMovement = .noMovement
                 return
             }
             
-            switch self.controlMovement{
+            switch self.controllerMovement{
             case .horizontal:
                 let controllerMove = xMove / 2.5
                 self.controllerHoriCenterCnstr.constant = controllerMove
@@ -323,7 +323,7 @@ import UIKit
                     self.actionTriggered = .noAction
                 }
                 else if abs(yMove) >= self.maxVerticalMovement * 2 {
-                    self.controlDidEndMove()
+                    self.controllerDidEndMove()
                 }
                 break
                 
@@ -332,18 +332,18 @@ import UIKit
             }
         }
         else if recognizer.state == UIGestureRecognizerState.ended {
-            if controlMovement == .vertical && self.actionTriggered == .noAction{
+            if controllerMovement == .vertical && self.actionTriggered == .noAction{
                 self.toggleSubcontroller()
             }
             else if self.subcontrollerHeightCnstr.constant == self.openedSubcontrollerHeight {
                 self.closeSubController(animated: true)
             }
-            self.controlDidEndMove()
+            self.controllerDidEndMove()
         }
         
     }
 
-    private func controlDidEndMove() {
+    private func controllerDidEndMove() {
         self.panGesture!.isEnabled = false
         self.vibrate()
         switch self.actionTriggered{
