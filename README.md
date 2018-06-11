@@ -15,7 +15,8 @@ In other words.. A Controller (for song or whatever you want) like the one at th
 
 - Copy MGAmaznLikeController.swift and MGAmaznLikeController.xib in your project
 - Add a UIView wherever you want and set its class as MGAmaznLikeController
-
+- Create a referencing outlet on your view controller
+- Implement MGALCDelegate protocol on your view controller and set your view controller as delegate of the MGAmaznLikeController
 
 
 ------
