@@ -85,7 +85,7 @@ import UIKit
     
     public private(set) var controllerImageForStatus : [ControllerStatus:UIImage] = [:]
     public private(set) var canVibrate : Bool = true
-    public private(set) var vibrationType : UIImpactFeedbackStyle = .light
+    public private(set) var vibrationType : UIImpactFeedbackGenerator.FeedbackStyle = .light
     
     public var delegate: MGALCDelegate?
 
@@ -104,7 +104,7 @@ import UIKit
     func commonInit() {
         let customViewNib = loadFromNib()
         customViewNib.frame = bounds
-        customViewNib.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
+        customViewNib.autoresizingMask = [UIView.AutoresizingMask.flexibleWidth, UIView.AutoresizingMask.flexibleHeight]
         addSubview(customViewNib)
     }
     
@@ -152,7 +152,7 @@ import UIKit
 
     
     // MARK: CALLABLE FUNCTIONS
-    public func changeVibration(active: Bool, type: UIImpactFeedbackStyle? = nil){
+    public func changeVibration(active: Bool, type: UIImpactFeedbackGenerator.FeedbackStyle? = nil){
         self.canVibrate = active
         self.vibrationType = type ?? .light
     }
@@ -186,7 +186,7 @@ import UIKit
                        delay: 0,
                        usingSpringWithDamping: 0.35,
                        initialSpringVelocity: 0.35,
-                       options: UIViewAnimationOptions.curveEaseIn,
+                       options: UIView.AnimationOptions.curveEaseIn,
                        animations: {
                         self.subControllerView.mgalcCornerRadius = (self.controllerView.frame.size.height / 2 + self.openedSubcontrollerHeight / 2)
                         self.subcontrollerHeightCnstr.constant = self.openedSubcontrollerHeight
@@ -233,7 +233,7 @@ import UIKit
                        delay: 0,
                        usingSpringWithDamping: 0.4,
                        initialSpringVelocity: 1,
-                       options: UIViewAnimationOptions.curveEaseIn,
+                       options: UIView.AnimationOptions.curveEaseIn,
                        animations: {
                         self.controllerVertCenterCnstr.constant = 0
                         self.controllerHoriCenterCnstr.constant = 0
@@ -256,7 +256,7 @@ import UIKit
     @objc private func pan(recognizer: UIPanGestureRecognizer) {
         let yMove = max(0, -recognizer.translation(in: self).y)
         let xMove = recognizer.translation(in: self).x
-        if recognizer.state == UIGestureRecognizerState.changed {
+        if recognizer.state == UIGestureRecognizer.State.changed {
             if self.controllerMovement == .noMovement {
                 if abs(yMove) > abs(xMove) {
                     self.controllerMovement = .vertical
@@ -331,7 +331,7 @@ import UIKit
                 break
             }
         }
-        else if recognizer.state == UIGestureRecognizerState.ended {
+        else if recognizer.state == UIGestureRecognizer.State.ended {
             if controllerMovement == .vertical && self.actionTriggered == .noAction{
                 self.toggleSubcontroller()
             }
